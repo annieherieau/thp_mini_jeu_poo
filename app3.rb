@@ -4,6 +4,12 @@ Bundler.require
 require_relative 'lib/game'
 require_relative 'lib/player'
 
+require 'bundler'
+Bundler.require
+
+require_relative 'lib/game'
+require_relative 'lib/player'
+
 # Start game 
 puts ''.center(47,'-')
 puts '|'+"Bienvenue sur 'ILS VEULENT TOUS MA POO' !".center(45,' ')+'|'
@@ -91,3 +97,5 @@ puts ''
 puts (car*4).center(20, ' ')
 puts 'La partie est finie'
 puts str
+
+binding.pry
