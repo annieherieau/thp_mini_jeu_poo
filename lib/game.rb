@@ -5,6 +5,7 @@ class Game
   attr_accessor :human_player, :enemies, :max_enemies, :static_menu, :dynamic_menu, :welcome
 
   def initialize
+    welcome
     @human_player = HumanPlayer.new(get_human_player_name)
     @max_enemies = get_max_enemies
     @enemies = self.built_ennemies_team
@@ -25,7 +26,6 @@ class Game
   # demander le nom du user
   def get_human_player_name
     name=''
-    system('clear')
     puts "Human Player, quel est ton nom ?"
     name = gets.chomp while name == ''
     return name

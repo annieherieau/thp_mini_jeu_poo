@@ -11,19 +11,10 @@ require_relative 'lib/game'
 require_relative 'lib/player'
 
 # Start game 
-
-
-# New Human Player
-# demander le nom au joueur
-
-
 # new game
 my_game = Game.new
 user = my_game.human_player
 enemies = my_game.enemies
-
-# ecran d'acceuil
-my_game.welcome
 
 # play rounds
 # bouble jusqu'à User > 0 ou nbre d'enemies > 0
