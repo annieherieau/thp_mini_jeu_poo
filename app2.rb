@@ -5,6 +5,7 @@ require_relative 'lib/game'
 require_relative 'lib/player'
 
 # Start game 
+system('clear')
 puts ''.center(47,'-')
 puts '|'+"Bienvenue sur 'ILS VEULENT TOUS MA POO' !".center(45,' ')+'|'
 puts '|'+"Sauras-tu survivre ?".center(45,' ')+'|'
