@@ -47,7 +47,7 @@ class Game
   # créer les players ennemis >> return Array of Players
   def built_ennemies_team
     array = []
-    (1..@max_enemies).each do |i|
+    (0...@max_enemies).each do |i|
       name = "Dark_%0#{number_of_digits}d" % [i]
       e = Player.new(name)
       array << e
