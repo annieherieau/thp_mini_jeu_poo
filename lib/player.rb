@@ -97,12 +97,12 @@ class HumanPlayer < Player
       str =  "Tu n'as rien trouvé... "
     when 6
       @life_points += 80
-      str =  "Waow, tu as trouvé un pack de +80 points de vie !"
+      str =  "Waow, tu as trouvé un pack de +80 points de vie !
+      tu passes à "
     else
       @life_points += 50
       str =  "Bravo, tu as trouvé un pack de +50 points de vie !"
     end
-
     @life_points= 100 if @life_points > 100
     return str
   end
