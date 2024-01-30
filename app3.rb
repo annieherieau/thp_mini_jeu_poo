@@ -41,5 +41,3 @@ end
 
 # End game
 my_game.end
-
-binding.pry

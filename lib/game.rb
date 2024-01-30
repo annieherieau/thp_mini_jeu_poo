@@ -34,28 +34,23 @@ class Game
   # demander le nombre d'ennemis
   def get_max_enemies
     max = 0
-    puts "Combien d'ennemis veux-tu affronter?"
-    max = gets.chomp.to_i while max == 0
+    puts "Combien d'ennemis veux-tu affronter? (1-50)"
+    max = gets.chomp.to_i until max.between?(1,50)
     update_human_life_points(max)
     return max
   end
 
   # max life_points de human en fonction du nombre d'ennemis
   def update_human_life_points(max)
-    @human_player.max_life_points = 10*max
+    @human_player.max_life_points = 25 * max
     @human_player.life_points = @human_player.max_life_points
-  end
-
-  # nombre de digits pour le nom des joueurs >> returns Integer
-  def number_of_digits
-    @max_enemies.to_s.length + 1
   end
 
   # créer les players ennemis >> return Array of Players
   def built_ennemies_team
     array = []
     (0...@max_enemies).each do |i|
-      name = "Dark_%0#{number_of_digits}d" % [i]
+      name = "bot_%03d" % [(rand() * 1000).floor]
       e = Player.new(name)
       array << e
     end
@@ -69,7 +64,7 @@ class Game
 
   # menu dynamique des enemies >> returns Array
   def update_dynamic_menu
-    @dynamic_menu = @enemies.map do |e|
+    @dynamic_menu = @enemies.sample(10).sort_by{|e| enemies.index(e)}.map do |e|
       {option: enemies.index(e).to_s, text: e.show_state}
     end
   end
@@ -81,8 +76,8 @@ class Game
     @static_menu.each do |item|
       puts "#{item[:option]} - #{item[:text]}"
     end
-    puts 'ou attaquer un joueur : '
-    @dynamic_menu.each {|item| puts "#{item[:option]} - #{item[:text]}"}
+    puts "ou attaquer l'un de ces joueurs : "
+    @dynamic_menu.each {|item| puts "#{item[:option].rjust(2,' ')} - #{item[:text]}"}
   end
 
   # poursuite du jeu >> returns Boolean
@@ -92,7 +87,8 @@ class Game
 
   # état des joueurs >> puts
   def show_players
-    puts "\n🤍 🤍 🤍 🤍".center(25, ' ')
+    puts''
+    puts "🤍 🤍 🤍 🤍".center(25, ' ')
     puts "Voici l'état des joueurs :"
     puts @human_player.show_state
     @enemies.length.zero? ? s = '' : s = 's'
@@ -132,8 +128,6 @@ class Game
     puts "Total infligé : #{points - human_player.life_points}"
   end
 
-  
-
   # fin de partie
   def end
     if human_player.life_points.zero?
@@ -141,7 +135,7 @@ class Game
       str = "T'as perdu ! T'es qu'un loooser"
     else
       car = '⭐️ '
-      str = "BRAVO #{user.name.upcase} ! TU AS GAGNÉ !"
+      str = "BRAVO #{@human_player.name.upcase} ! TU AS GAGNÉ !"
     end
     puts "\n#{(car*4).center(20, ' ')}\nLa partie est finie"
     puts str
