@@ -43,9 +43,10 @@ until user.life_points.zero? || enemies.map{|e| e.life_points}.sum.zero? do
   puts "#{user.name.capitalize}, quelle action veux-tu effectuer ?"
   static_menu.each {|item| puts "#{item[:option]} - #{item[:text]}"}
 
-  # création du menu des enemies: sauf ceux à 0 pts
-  dynamic_menu = enemies.map {|plr|
-    {option: enemies.index(plr).to_s, text: plr.show_state} unless plr.life_points.zero?}
+  # création du menu des enemies avec life_points > 0
+  dynamic_menu = enemies.filter{|e| e.life_points > 0}.map do |e|
+    {option: enemies.index(e).to_s, text: e.show_state}
+  end
 
   puts 'ou attaquer un joueur : '
   dynamic_menu.each {|item| puts "#{item[:option]} - #{item[:text]}"}
@@ -64,7 +65,8 @@ until user.life_points.zero? || enemies.map{|e| e.life_points}.sum.zero? do
   else
     puts user.attacks(enemies[user_choice.to_i])
   end
-  
+
+  break if enemies.map{|e| e.life_points}.sum.zero?
   gets.chomp
 
   # attaque des enemies
