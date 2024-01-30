@@ -7,6 +7,8 @@ require_relative 'lib/player'
 # Start game : players
 player1 = Player.new("Josiane")
 player2 = Player.new("José")
+# modifier avatar player 2 si les 2 avatars sont identiques
+player2.avatar = '🎃' if player1.avatar == player2.avatar
 
 puts "À ma droite #{player1.name} #{player1.avatar}"
 puts "À ma gauche #{player2.name} #{player2.avatar}"
