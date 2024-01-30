@@ -12,10 +12,10 @@ class Player
     @avatar = ['🐶', '🦄​', '🐯​', "🔥", "🍀", '🎲', '😸'].sample
   end
 
-  # affiche l'état du joueur
+  # string de l'état du joueur
   def show_state
     @life_points > 1 ? s = 's' : s = ''
-    puts "#{@avatar} #{@name} a #{@life_points} point#{s} de vie"
+    return "#{@avatar} #{@name} a #{@life_points} point#{s} de vie"
   end
 
   # subir une attaque
@@ -23,7 +23,8 @@ class Player
     @life_points -= hit
     if @life_points <= 0
       @life_points = 0
-      puts "💀 #{@name} a été tué !"
+      @avatar = '💀 '
+      puts "#{@avatar} #{@name} a été tué ! #{@life_points}"
     end
   end
 
@@ -43,16 +44,25 @@ class Player
 end
 
 class HumanPlayer < Player
-  attr_accessor :@weapon_level
+  attr_accessor :weapon_level
 
   # initialisation
-  def initialize(name)
-    @name = name
+  def initialize
+    @name = get_user_name
     @life_points = 100
     @avatar = ['🥰', '😁​', '😇', '😎', '🥳'].sample
     @weapon_level = 1
   end
 
+  # demander le nom au joueur
+  def get_user_name
+    puts 'Human Player, quel est ton nom ?'
+    name = ''
+    while name == ''
+      name = gets.chomp
+    end
+    return name
+  end
   # affiche l'état du joueur
   def show_state
     @life_points > 1 ? s = 's' : s = ''
