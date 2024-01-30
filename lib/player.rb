@@ -60,20 +60,12 @@ class HumanPlayer < Player
   attr_accessor :weapon_level
 
   # initialisation
-  def initialize
-    @name = get_user_name
+  def initialize(name)
+    @name = name
     @max_life_points = 100
     @life_points = @max_life_points
     @avatar = ['🥰', '😁​', '😇', '😎', '🥳'].sample
     @weapon_level = 1
-  end
-
-  # demander le nom au joueur
-  def get_user_name
-    puts 'Human Player, quel est ton nom ?'
-    name = ''
-    name = gets.chomp while name == ''
-    name
   end
 
   # affiche l'état du joueur

@@ -12,7 +12,12 @@ puts ''.center(47,'-')
 puts ''
 
 # New Human Player
-user = HumanPlayer.new
+# demander le nom au joueur
+puts 'Human Player, quel est ton nom ?'
+name = ''
+name = gets.chomp while name == ''
+
+user = HumanPlayer.new(name)
 
 # Computer enemies
 enemies = []

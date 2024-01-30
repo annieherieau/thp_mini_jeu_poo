@@ -18,69 +18,36 @@ puts ''.center(47,'-')
 puts ''
 
 # New Human Player
-user = HumanPlayer.new
+# demander le nom au joueur
+puts 'Human Player, quel est ton nom ?'
+name = ''
+name = gets.chomp while name == ''
 
-# Computer enemies
-enemies = []
-enemies_names = ['Josiane', 'José']
-max_enemies = 2
-(0...max_enemies).each do |i|
-  enemies << Player.new(enemies_names[i])
-end
+# new game
+my_game = Game.new(name)
+user = my_game.human_player
+enemies = my_game.enemies
 
 # play rounds
-static_menu= [ 
-  {option: 'a', text: 'chercher une meilleure Arme'},
-  {option: 's', text: 'chercher une potion de Soin'}
-]
 
-# bouble jusqu'à User à 0 ou somme de points enemies à 0
-until user.life_points.zero? || enemies.map{|e| e.life_points}.sum.zero? do 
+# bouble jusqu'à User > 0 ou nbre d'enemies > 0
+while my_game.is_still_ongoing? do 
 
-  # show_state
-  puts ''
-  puts "🤍 🤍 🤍 🤍".center(25, ' ')
-  # puts "Voici l'état de chaque joueur :"
-  puts user.show_state
+  # états des joueurs
+  my_game.show_players
   
-  # choix action du HumanPlayer
   # affichage du menu
-  puts ''
-  puts "#{user.name.capitalize}, quelle action veux-tu effectuer ?"
-  static_menu.each {|item| puts "#{item[:option]} - #{item[:text]}"}
+  my_game.print_menu
 
-  # création du menu des enemies avec life_points > 0
-  dynamic_menu = enemies.filter{|e| e.life_points > 0}.map do |e|
-    {option: enemies.index(e).to_s, text: e.show_state}
-  end
+  # enregistrer choix du user + exécuter l'action
+  my_game.menu_choice(my_game.get_user_choice)
 
-  puts 'ou attaquer un joueur : '
-  dynamic_menu.each {|item| puts "#{item[:option]} - #{item[:text]}"}
-
-  # enregistrer choix du user
-  options = (static_menu + dynamic_menu).map{|e| e[:option]}
-  user_choice = ''
-  until options.include?(user_choice) do
-    user_choice = gets.chomp.downcase
-  end
-
-  # executer action du user
-  if user_choice.match?(/[[:alpha:]]/)
-    puts user.search_weapon if user_choice == 'a'
-    puts user.search_health_pack if user_choice == 's'
-  else
-    puts user.attacks(enemies[user_choice.to_i])
-  end
-
-  break if enemies.map{|e| e.life_points}.sum.zero?
+  # sortir de la boucle si tous les enemeis sont à 0
+  break unless my_game.is_still_ongoing?
   gets.chomp
 
   # attaque des enemies
-  puts "💥 💥 💥 💥".center(25, ' ')
-  puts "Les autres joueurs t'attaquent !"
-  user_points = user.life_points
-  enemies.each {|e| e.attacks(user) unless e.life_points.zero?}
-  puts "Total infligé : #{user_points - user.life_points}"
+  my_game.enemies_attack
 
 end
 
