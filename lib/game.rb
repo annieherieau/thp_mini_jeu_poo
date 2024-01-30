@@ -36,7 +36,14 @@ class Game
     max = 0
     puts "Combien d'ennemis veux-tu affronter?"
     max = gets.chomp.to_i while max == 0
+    update_human_life_points(max)
     return max
+  end
+
+  # max life_points de human en fonction du nombre d'ennemis
+  def update_human_life_points(max)
+    @human_player.max_life_points = 10*max
+    @human_player.life_points = @human_player.max_life_points
   end
 
   # nombre de digits pour le nom des joueurs >> returns Integer
