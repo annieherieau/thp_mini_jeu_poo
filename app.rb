@@ -26,12 +26,12 @@ until player1.life_points.zero? || player2.life_points.zero?
   # attacks
   puts "💥 💥 💥 💥".center(25, ' ')
   puts "Passons à la phase d'attaque :"
-  player1.attacks(player2)
-  player2.attacks(player1) unless player2.life_points.zero?
+  puts player1.attacks(player2)
+  puts player2.attacks(player1) unless player2.life_points.zero?
   puts ''
 end
 
 # End game = winner
 player1.life_points.zero? ? winner = player2 : winner = player1
-puts "⭐️ ⭐️ ⭐️ ⭐️".center(25, ' ')
-puts "VAINQUEUR : #{winner.name} #{winner.avatar}"
+puts "⭐️ ⭐️ ⭐️ ⭐️".center(20, ' ')
+puts "VAINQUEUR : #{winner.name} #{winner.avatar}\n\n"

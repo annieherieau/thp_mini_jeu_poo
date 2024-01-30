@@ -21,20 +21,23 @@ class Player
   # subir une attaque
   def gets_damage(hit)
     @life_points -= hit
+    str = ''
     if @life_points <= 0
       @life_points = 0
       @avatar = '💀 '
-      puts "#{@avatar} #{@name} a été tué ! #{@life_points}"
+      str = "#{@avatar} #{@name} a été tué !"
     end
+    return str
   end
 
   # attaquer l'autre joueur
   def attacks(other_player)
-    puts "#{@avatar} #{@name} attaque #{other_player.name}"
     hit = compute_damage
     hit > 1 ? s='s' : s=''
-    puts "et lui inflige #{hit} point#{s} de dommages"
-    other_player.gets_damage(hit)
+    str = "#{@avatar} #{@name} attaque #{other_player.name}
+    et lui inflige #{hit} point#{s} de dommages\n"
+    str += other_player.gets_damage(hit)
+    return str
   end
 
   # calcul des points d'attaque
@@ -66,7 +69,7 @@ class HumanPlayer < Player
   # affiche l'état du joueur
   def show_state
     @life_points > 1 ? s = 's' : s = ''
-    puts "#{@avatar} #{@name} a #{@life_points} point#{s} de vie et une arme de niveau #{@weapon_level}"
+    return "#{@avatar} #{@name} a #{@life_points} point#{s} de vie et une arme de niveau #{@weapon_level}"
   end
 
   # calcul des points d'attaque
@@ -77,29 +80,31 @@ class HumanPlayer < Player
   # chercher une nouvelle arme
   def search_weapon
     new_weapon = rand(1..6)
-    puts "Tu as trouvé une arme de niveau #{new_weapon}"
+    str = "Tu as trouvé une arme de niveau #{new_weapon}\n"
     if new_weapon > @weapon_level
       @weapon_level = new_weapon 
-      puts "Youhou ! elle est meilleure que ton arme actuelle : tu la prends."
+      str += "Youhou ! elle est meilleure que ton arme actuelle : tu la prends."
     else
-    "M@*#$... elle n'est pas mieux que ton arme actuelle..."
+      str += "M@*#$... elle n'est pas mieux que ton arme actuelle..."
     end
+    return str
   end
 
   # chercher un pack de points de vie
   def search_health_pack
-    pack = rand(1..6)
-    case pack
+    case rand(1..6)
     when 1
-      puts "Tu n'as rien trouvé... "
+      str =  "Tu n'as rien trouvé... "
     when 6
       @life_points += 80
-      puts "Waow, tu as trouvé un pack de +80 points de vie !"
+      str =  "Waow, tu as trouvé un pack de +80 points de vie !"
     else
       @life_points += 50
-      puts "Bravo, tu as trouvé un pack de +50 points de vie !"
+      str =  "Bravo, tu as trouvé un pack de +50 points de vie !"
     end
+
     @life_points= 100 if @life_points > 100
+    return str
   end
 
 end
