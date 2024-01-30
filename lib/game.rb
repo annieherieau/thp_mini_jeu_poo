@@ -2,15 +2,41 @@ require 'bundler'
 Bundler.require
 
 class Game
-  attr_accessor :human_player, :enemies, :max_enemies, :static_menu, :dynamic_menu
+  attr_accessor :human_player, :enemies, :max_enemies, :static_menu, :dynamic_menu, :welcome
 
-  def initialize(name, max_enemies=4)
-    @human_player = HumanPlayer.new(name)
-    @max_enemies = max_enemies
+  def initialize
+    @human_player = HumanPlayer.new(get_human_player_name)
+    @max_enemies = get_max_enemies
     @enemies = self.built_ennemies_team
     @dynamic_menu = update_dynamic_menu
     @static_menu = [{option: 'a', text: 'chercher une meilleure Arme'},
     {option: 's', text: 'chercher une potion de Soin'}]
+  end
+
+  # écran d'accueil >> puts
+  def welcome 
+    system('clear')
+    puts ''.center(47,'-')
+    puts '|'+"Bienvenue sur 'ILS VEULENT TOUS MA POO' !".center(45,' ')+'|'
+    puts '|'+"Sauras-tu survivre ?".center(45,' ')+'|'
+    puts ''.center(47,'-')
+  end
+
+  # demander le nom du user
+  def get_human_player_name
+    name=''
+    system('clear')
+    puts "Human Player, quel est ton nom ?"
+    name = gets.chomp while name == ''
+    return name
+  end
+
+  # demander le nombre d'ennemis
+  def get_max_enemies
+    max = 0
+    puts "Combien d'ennemis veux-tu affronter?"
+    max = gets.chomp.to_i while max == 0
+    return max
   end
 
   # nombre de digits pour le nom des joueurs >> returns Integer
@@ -54,13 +80,12 @@ class Game
 
   # poursuite du jeu >> returns Boolean
   def is_still_ongoing?
-    @human_player.life_points > 0 || @enemies.length > 0
+    @human_player.life_points > 0 && @enemies.length > 0
   end
 
   # état des joueurs >> puts
   def show_players
-    puts ''
-    puts "🤍 🤍 🤍 🤍".center(25, ' ')
+    puts "\n🤍 🤍 🤍 🤍".center(25, ' ')
     puts "Voici l'état des joueurs :"
     puts @human_player.show_state
     @enemies.length.zero? ? s = '' : s = 's'
@@ -84,6 +109,7 @@ class Game
     else
       puts human_player.attacks(@enemies[user_choice.to_i])
       kill_player
+      update_dynamic_menu
     end
   end
 
@@ -92,11 +118,25 @@ class Game
     puts "💥 💥 💥 💥".center(25, ' ')
     puts "Les autres joueurs t'attaquent !"
     points = human_player.life_points
-    @enemies.each {|e| puts e.attacks(human_player)}
+    @enemies.each do |e|
+      e.attacks(human_player)
+      break unless is_still_ongoing?
+    end
     puts "Total infligé : #{points - human_player.life_points}"
   end
 
-  def end
+  
 
+  # fin de partie
+  def end
+    if human_player.life_points.zero?
+      car = '👎 '
+      str = "T'as perdu ! T'es qu'un loooser"
+    else
+      car = '⭐️ '
+      str = "BRAVO #{user.name.upcase} ! TU AS GAGNÉ !"
+    end
+    puts "\n#{(car*4).center(20, ' ')}\nLa partie est finie"
+    puts str
   end
 end
