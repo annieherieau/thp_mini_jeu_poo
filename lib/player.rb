@@ -6,7 +6,6 @@ class Player
   attr_accessor :life_points, :name, :avatar, :max_life_points
   # gestion d'un max de vie
   
-
   # initialisation
   def initialize(name)
     @name = name

@@ -2,16 +2,20 @@ require 'bundler'
 Bundler.require
 
 class Game
-  attr_accessor :human_player, :enemies, :max_enemies, :static_menu, :dynamic_menu, :welcome
+  attr_accessor :human_player, :max_enemies,:players_left, :enemies_in_sight, :static_menu, :dynamic_menu
 
   def initialize
     welcome
     @human_player = HumanPlayer.new(get_human_player_name)
     @max_enemies = get_max_enemies
-    @enemies = self.built_ennemies_team
-    @dynamic_menu = update_dynamic_menu
+   
+    @players_left = @max_enemies # représente le nombre de joueur restant dans le jeu 
+    @enemies_in_sight = []  #sont ceux en vue (= qu'on peut attaquer et qui vont nosu attaquer
+    new_player(4)
+
     @static_menu = [{option: 'a', text: 'chercher une meilleure Arme'},
     {option: 's', text: 'chercher une potion de Soin'}]
+    @dynamic_menu = update_dynamic_menu(@enemies_in_sight)
   end
 
   # écran d'accueil >> puts
@@ -36,36 +40,28 @@ class Game
     max = 0
     puts "Combien d'ennemis veux-tu affronter? (1-50)"
     max = gets.chomp.to_i until max.between?(1,50)
-    update_human_life_points(max)
+    # update_human_life_points(max)
     return max
   end
 
-  # max life_points de human en fonction du nombre d'ennemis
-  def update_human_life_points(max)
-    @human_player.max_life_points = 25 * max
-    @human_player.life_points = @human_player.max_life_points
-  end
-
-  # créer les players ennemis >> return Array of Players
-  def built_ennemies_team
-    array = []
-    (0...@max_enemies).each do |i|
+  # créer 1 player
+  def new_player(nb)
+    (1..nb).each do |i|
       name = "bot_%03d" % [(rand() * 1000).floor]
-      e = Player.new(name)
-      array << e
+      @enemies_in_sight << Player.new(name)
+      @players_left -= 1
     end
-    return array
   end
 
   # supprimer les enemies à 0 >> returns Array
   def kill_player
-    @enemies = enemies.filter{|e| e.life_points > 0}
+    @enemies_in_sight = @enemies_in_sight.filter{|e| e.life_points > 0}
   end
 
   # menu dynamique des enemies >> returns Array
-  def update_dynamic_menu
-    @dynamic_menu = @enemies.sample(10).sort_by{|e| enemies.index(e)}.map do |e|
-      {option: enemies.index(e).to_s, text: e.show_state}
+  def update_dynamic_menu(enemies_array)
+    @dynamic_menu = enemies_array.map do |e|
+      {option: enemies_array.index(e).to_s, text: e.show_state}
     end
   end
 
@@ -82,7 +78,7 @@ class Game
 
   # poursuite du jeu >> returns Boolean
   def is_still_ongoing?
-    @human_player.life_points > 0 && @enemies.length > 0
+    @human_player.life_points > 0 && (@enemies_in_sight.length + @players_left) > 0
   end
 
   # état des joueurs >> puts
@@ -91,9 +87,9 @@ class Game
     puts "🤍 🤍 🤍 🤍".center(25, ' ')
     puts "Voici l'état des joueurs :"
     puts @human_player.show_state
-    @enemies.length.zero? ? s = '' : s = 's'
-    puts "#{@enemies.length} joueur#{s} restant#{s}"
-    puts @enemies.map{|e| e.avatar}.join(' ')
+    @enemies_in_sight.length.zero? ? s = '' : s = 's'
+    puts "#{@enemies_in_sight.length} joueur#{s} en vue et #{@players_left} restants"
+    puts @enemies_in_sight.map{|e| e.avatar}.join(' ')
   end
 
   # enregistre le choix du user
@@ -110,9 +106,9 @@ class Game
       puts human_player.search_weapon if user_choice == 'a'
       puts human_player.search_health_pack if user_choice == 's'
     else
-      puts human_player.attacks(@enemies[user_choice.to_i])
+      puts human_player.attacks(@enemies_in_sight[user_choice.to_i])
       kill_player
-      update_dynamic_menu
+      update_dynamic_menu(@enemies_in_sight)
     end
   end
 
@@ -121,7 +117,7 @@ class Game
     puts "💥 💥 💥 💥".center(25, ' ')
     puts "Les autres joueurs t'attaquent !"
     points = human_player.life_points
-    @enemies.each do |e|
+    @enemies_in_sight.each do |e|
       e.attacks(human_player)
       break unless is_still_ongoing?
     end
@@ -139,5 +135,29 @@ class Game
     end
     puts "\n#{(car*4).center(20, ' ')}\nLa partie est finie"
     puts str
+  end
+
+  # rajouter des ennemis en vue
+  def new_players_in_sight
+    if @players_left <= @enemies_in_sight.length
+      puts 'Tous les joueurs sont déjà en vue'
+    end
+    if dice_roll ==1
+      puts "Pas d'ennemis en vue"
+    end
+    if dice_roll.between?(2,4)
+      new_player(1)
+      puts "1 ennemi en plus"
+    end
+    if dice_roll >= 5
+      new_player(2)
+      puts "Zut, 2 ennemis en plus"
+    end
+    
+  end
+
+  # lancer de dés
+  def dice_roll
+    rand(1..6)
   end
 end

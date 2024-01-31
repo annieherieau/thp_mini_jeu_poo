@@ -4,17 +4,10 @@ Bundler.require
 require_relative 'lib/game'
 require_relative 'lib/player'
 
-require 'bundler'
-Bundler.require
-
-require_relative 'lib/game'
-require_relative 'lib/player'
-
 # Start game 
 # new game
 my_game = Game.new
-user = my_game.human_player
-enemies = my_game.enemies
+my_game.human_player
 
 # play rounds
 # bouble jusqu'à User > 0 ou nbre d'enemies > 0
@@ -36,7 +29,7 @@ while my_game.is_still_ongoing? do
 
   # attaque des enemies
   my_game.enemies_attack
-  
+  my_game.new_players_in_sight
 end
 
 # End game
